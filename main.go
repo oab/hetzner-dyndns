@@ -41,34 +41,24 @@ func getIP(server *string) net.IP {
 
 
 func sendUpdateRecord(value, apitoken, ttl, recordtype, recordid, recordname, zoneid * string) {
-	// Update Record (PUT https://dns.hetzner.com/api/v1/records/{RecordID})
-
 	json := []byte(fmt.Sprintf(`{"value":%q,"ttl":%s,"type":%q,"name":%q,"zone_id":%q}`,*value,*ttl,*recordtype,*recordname,*zoneid))
-	// fmt.Println(string(json))
-	// log.Fatalln(errors.New("test"))
 	body := bytes.NewBuffer(json)
 
-	// Create client
 	client := &http.Client{}
 
-	// Create request
 	req, err := http.NewRequest("PUT", fmt.Sprintf(`https://dns.hetzner.com/api/v1/records/%s`,*recordid), body)
 
-	// Headers
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Auth-API-Token", *apitoken)
 
-	// Fetch Request
 	resp, err := client.Do(req)
 	
 	if err != nil {
 		log.Println("Failure : ", err)
 	}
 
-	// Read Response Body
 	respBody, _ := ioutil.ReadAll(resp.Body)
 
-	// Display Results
 	log.Println("response Status : ", resp.Status)
 	log.Println("response Headers : ", resp.Header)
 	log.Println("response Body : ", string(respBody))
